@@ -9,7 +9,8 @@ SIZE_X=800
 SIZE_Y=500
 turtle.setup(SIZE_X, SIZE_Y)
 turtle.penup()
-
+pygame.mixer.init()
+pygame.mixer.music.load("bell.mp3")
 SQUARE_SIZE = 5
 START_LENGTH = 4
 TIME_STEP = 10
@@ -166,13 +167,19 @@ def move_turtle():
 
     
 
-    
- 
-time_count.shape("1.gif")
+time_count.hideturtle()    
+pygame.mixer.music.play() 
+time.sleep(0.3)
+time_count.showturtle()
+time_count.shape("3.gif")
 time.sleep(1)
+pygame.mixer.music.play()
+time.sleep(0.3)
 time_count.shape("2.gif")
 time.sleep(1)
-time_count.shape("3.gif")
+pygame.mixer.music.play()
+time.sleep(0.3)
+time_count.shape("1.gif")
 time.sleep(1)
 time_count.hideturtle()
 move_turtle()
