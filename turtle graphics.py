@@ -1,8 +1,6 @@
 import turtle
 
 
-animation_time = 5
-
 turtle.shape("seaturtle_1")
 
 

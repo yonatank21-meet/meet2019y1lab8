@@ -1,9 +1,9 @@
 import turtle
 import random
 import time
-
+turtle.penup()
 turtle.tracer(1,0)
-
+turtle.goto(-300, 0)
 SIZE_X=800
 SIZE_Y=500
 turtle.setup(SIZE_X, SIZE_Y)
@@ -161,7 +161,7 @@ def move_turtle():
     
     
 
-
+time.sleep(3)
 move_turtle()
 turtle_animation()
 turtle.mainloop()
