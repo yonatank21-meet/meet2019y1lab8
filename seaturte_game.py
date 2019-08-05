@@ -1,6 +1,7 @@
 import turtle
 import random
 import time
+import pygame
 turtle.penup()
 turtle.tracer(1,0)
 turtle.goto(-300, 0)
@@ -12,8 +13,9 @@ turtle.penup()
 SQUARE_SIZE = 5
 START_LENGTH = 4
 TIME_STEP = 10
-
-
+time_count = turtle.clone()
+time_count.penup()
+time_count.goto(0, 0)
 food_pos = []
 food_stamps = []
 
@@ -22,6 +24,12 @@ turtle.direction = "Up"
 player_status = "alive"
 UP_EDGE = 250
 DOWN_EDGE = -250
+
+
+turtle.register_shape("1.gif")
+turtle.register_shape("2.gif")
+turtle.register_shape("3.gif")
+
 
 turtle.register_shape("seaturtle_1.gif")
 turtle.register_shape("seaturtle_2.gif")
@@ -159,9 +167,14 @@ def move_turtle():
     
 
     
-    
-
-time.sleep(3)
+ 
+time_count.shape("1.gif")
+time.sleep(1)
+time_count.shape("2.gif")
+time.sleep(1)
+time_count.shape("3.gif")
+time.sleep(1)
+time_count.hideturtle()
 move_turtle()
 turtle_animation()
 turtle.mainloop()
