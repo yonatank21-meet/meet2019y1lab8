@@ -2,30 +2,59 @@ import turtle
 import random
 import time
 import pygame
+
+
 turtle.penup()
 turtle.tracer(1,0)
 turtle.goto(-300, 0)
+
+
 SIZE_X=800
 SIZE_Y=500
+
+
+
 turtle.setup(SIZE_X, SIZE_Y)
 turtle.penup()
+
+
+
 pygame.mixer.init()
 pygame.mixer.music.load("bell.mp3")
+
+
 SQUARE_SIZE = 7
+
+
 turtle.bgpic("seabg.gif")
+
+
+
 SQUARE_SIZE = 5
 START_LENGTH = 4
 TIME_STAMP = 10
+TIME_STEP =  1
+
+
 time_count = turtle.clone()
 time_count.penup()
 time_count.goto(0, 0)
 
+
+
+
 TRASH_LIST = ["bag.gif" , "oil.gif" ,"bottle.gif"]
 turtle.direction = "Up"
-trash_pos = [(400,100), (400,-100), (200,-50)]
+
+food_pos = [(400,50) ,(400,-70)]
+trash_pos = [(400,100), (300,-100), (200,-50)]
 trash= turtle.clone()
 trash2= turtle.clone()
 trash1= turtle.clone()
+food= turtle.clone()
+
+
+turtle.register_shape("jellyfish.gif") 
 turtle.register_shape("oil.gif")
 turtle.register_shape("bottle.gif")
 turtle.register_shape("bag.gif")
@@ -33,20 +62,47 @@ TIME_STEP =  1
 trash.shape(random.choice(TRASH_LIST)) 
 trash2.shape(random.choice(TRASH_LIST)) 
 trash1.shape(random.choice(TRASH_LIST)) 
-
+food.shape("jellyfish.gif")
 player_status = "alive"
 UP_EDGE = 250
 DOWN_EDGE = -250
 
 
-
+turtle.register_shape("seaturtle_1.gif")
 
 turtle.register_shape("1.gif")
 turtle.register_shape("2.gif")
 turtle.register_shape("3.gif")
+turtle.shape("seaturtle_1.gif")
+trash.hideturtle()
+trash1.hideturtle()
+trash2.hideturtle()
+time_count.hideturtle()
+food.hideturtle()
+pygame.mixer.music.play() 
+time.sleep(0.5)
+time_count.showturtle()
+time_count.shape("3.gif")
+time.sleep(1)
+pygame.mixer.music.play()
+time.sleep(0.5)
+time_count.shape("2.gif")
+time.sleep(1)
+pygame.mixer.music.play()
+time.sleep(0.5)
+time_count.shape("1.gif")
+time.sleep(1)
+time_count.hideturtle()
+trash.showturtle()
+trash1.showturtle()
+trash2.showturtle()
+food.showturtle()
 
 
-turtle.register_shape("seaturtle_1.gif")
+pygame.mixer.music.load("buzzer.mp3")
+
+
+
 turtle.register_shape("seaturtle_2.gif")
 turtle.register_shape("seaturtle_3.gif")
 turtle.register_shape("seaturtle_4.gif")
@@ -168,9 +224,11 @@ def move_turtle():
 
 
     if y_pos >= UP_EDGE:
+        pygame.mixer.music.play()
         print("You hit the UP EDGE! Game over!")
         quit()
     elif  DOWN_EDGE >= y_pos :
+        pygame.mixer.music.play()
         print("You hit the DOWN EDGE! Game over!")
         quit()
 
@@ -197,6 +255,7 @@ for i in trash_pos:
     trash_pos_num += 1
     if trash_pos_num ==3:
         break
+
 def move_trash():
     global TIME_STEP
     trash.penup()
@@ -205,21 +264,20 @@ def move_trash():
     trash.backward(SQUARE_SIZE)
     trash1.backward(SQUARE_SIZE)
     trash2.backward(SQUARE_SIZE)
-    if turtle.pos() == trash.pos():
-        print("you ate trash!!!")
+    if (trash.xcor()-60 < turtle.xcor()< trash.xcor()+60) and (trash.ycor()-45 <turtle.ycor()< trash.ycor()+45):
+         pygame.mixer.music.play()
+         print("You hit the trash! Game over !!")
+         quit()
+    if (trash1.xcor()-60 <turtle.xcor()< trash1.xcor()+60) and (trash1.ycor()-45 <turtle.ycor()< trash1.ycor()+45):
+         pygame.mixer.music.play()
+         print("You hit the trash! Game over !!")
+         quit()
+    if (trash2.xcor()-60 <turtle.xcor()< trash2.xcor()+60) and (trash2.ycor()-45 <turtle.ycor()< trash2.ycor()+45):
+        pygame.mixer.music.play()
+        print("You hit the trash! Game over !!")
         quit()
-    elif turtle.pos() == trash1.pos():
-        print("you ate trash!!!")
-        quit()
-    elif turtle.pos() == trash2.pos():
-        print("you ate trash!!!")
-        quit()
-
-    """if turtle.pos() in trash_pos:
-        trash_index=trash_pos.index(turtle.pos()) 
-        trash_pos.pop(trash_index) 
-        print("You have eaten the the poison lol!!")
-        """
+    
+    
     #if len(trash_pos) <=4:
     if trash.xcor() <= -410:
         trash.hideturtle()
@@ -230,8 +288,8 @@ def move_trash():
     if trash2.xcor() <= -410:
         trash2.hideturtle()
         make_trash(trash2)
+        
     turtle.ontimer(move_trash, TIME_STEP)
-
 
     
 def make_trash(trash_turtle):
@@ -247,26 +305,48 @@ def make_trash(trash_turtle):
     trash_turtle.goto(400,trash_y)
     trash_turtle.speed()
     trash_turtle.showturtle()
+food_pos_num = 0
+for i in food_pos:
+    food.penup()
+    food.goto(food_pos[food_pos_num])
+    food.pendown()
+    food_pos_num += 1
+    if food_pos_num == 2:
+        break
+
+def move_food():
+    global TIME_STEP
+    food.penup()
+    food.backward(SQUARE_SIZE)
+    if (food.xcor()-60 < turtle.xcor()< food.xcor()+60) and (food.ycor()-45 <turtle.ycor()< food.ycor()+45):
+        print("You ate the jellyfish nice!!!")
+        make_food()
+    if food.xcor()<= -410:
+        food.hideturtle()
+        make_food()
+    turtle.ontimer(move_food,TIME_STEP)
+def make_food():
+    min1_y=-int(SIZE_Y/2/SQUARE_SIZE)+1
+    max1_y=int(SIZE_Y/2/SQUARE_SIZE)-1
+
+    food_y = random.randint(min1_y,max1_y)*SQUARE_SIZE
+   
+
+
+
+
+    food.penup()
+    food.speed(35)
+    food.goto(400,food_y)
+    food.speed()
+    food.showturtle()
     
 
 
     
-time_count.hideturtle()
 
-pygame.mixer.music.play() 
-time.sleep(0.5)
-time_count.showturtle()
-time_count.shape("3.gif")
-time.sleep(1)
-pygame.mixer.music.play()
-time.sleep(0.5)
-time_count.shape("2.gif")
-time.sleep(1)
-pygame.mixer.music.play()
-time.sleep(0.5)
-time_count.shape("1.gif")
-time.sleep(1)
-time_count.hideturtle()
+make_food()
+move_food()
 move_turtle()
 move_trash()
 turtle_animation()
