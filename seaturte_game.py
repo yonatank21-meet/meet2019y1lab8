@@ -2,7 +2,8 @@ import turtle
 import random
 import time
 import pygame
-
+from timeit import default_timer as timer
+from itertools import cycle
 
 turtle.penup()
 turtle.tracer(1,0)
@@ -29,13 +30,13 @@ SQUARE_SIZE = 7
 turtle.bgpic("seabg.gif")
 
 
-
+Heart = []
 SQUARE_SIZE = 5
 START_LENGTH = 4
 TIME_STAMP = 10
-TIME_STEP =  1
-
-
+TIME_STEP =  3
+TIME_STEP2 = 15000
+TIME_STEP3 = 1
 time_count = turtle.clone()
 time_count.penup()
 time_count.goto(0, 0)
@@ -52,8 +53,10 @@ trash= turtle.clone()
 trash2= turtle.clone()
 trash1= turtle.clone()
 food= turtle.clone()
+heart = turtle.clone()
 
 
+turtle.register_shape("heart.gif")
 turtle.register_shape("jellyfish.gif") 
 turtle.register_shape("oil.gif")
 turtle.register_shape("bottle.gif")
@@ -77,6 +80,17 @@ turtle.shape("seaturtle_1.gif")
 trash.hideturtle()
 trash1.hideturtle()
 trash2.hideturtle()
+
+heart.shape("heart.gif")
+heart.goto(-350, 220)
+Heart.append(heart.stamp())
+heart.goto(-280, 220)
+Heart.append(heart.stamp())
+heart.goto(-210, 220)
+Heart.append(heart.stamp())
+
+
+
 time_count.hideturtle()
 food.hideturtle()
 pygame.mixer.music.play() 
@@ -93,6 +107,7 @@ time.sleep(0.5)
 time_count.shape("1.gif")
 time.sleep(1)
 time_count.hideturtle()
+start = timer()
 trash.showturtle()
 trash1.showturtle()
 trash2.showturtle()
@@ -214,8 +229,7 @@ def move_turtle():
     x_pos = my_pos[0]
     y_pos = my_pos[1]
     
-    #If snake.direction is up, then we want the snake to change
-    #it’s y position by SQUARE_SIZE
+    
     if turtle.direction == "Up":
         turtle.goto(x_pos, y_pos + SQUARE_SIZE)
     elif turtle.direction=="Down":
@@ -226,10 +240,12 @@ def move_turtle():
     if y_pos >= UP_EDGE:
         pygame.mixer.music.play()
         print("You hit the UP EDGE! Game over!")
+        score_cac()
         quit()
     elif  DOWN_EDGE >= y_pos :
         pygame.mixer.music.play()
         print("You hit the DOWN EDGE! Game over!")
+        score_cac()
         quit()
 
     
@@ -255,6 +271,11 @@ for i in trash_pos:
     trash_pos_num += 1
     if trash_pos_num ==3:
         break
+min1_y=-int(SIZE_Y/2/SQUARE_SIZE)+1
+max1_y=int(SIZE_Y/2/SQUARE_SIZE)-1
+    
+    
+trash_y = random.randint(min1_y,max1_y)*SQUARE_SIZE
 
 def move_trash():
     global TIME_STEP
@@ -264,18 +285,38 @@ def move_trash():
     trash.backward(SQUARE_SIZE)
     trash1.backward(SQUARE_SIZE)
     trash2.backward(SQUARE_SIZE)
+    heart.hideturtle()
     if (trash.xcor()-60 < turtle.xcor()< trash.xcor()+60) and (trash.ycor()-45 <turtle.ycor()< trash.ycor()+45):
          pygame.mixer.music.play()
-         print("You hit the trash! Game over !!")
-         quit()
+         print("You hit the trash!")
+         
+         clear1 = Heart.pop(-1)
+         heart.clearstamp(clear1)
+         trash.goto(400,trash_y)
+         if len(Heart) == 0:
+             score_cac()
+             quit()
+        
     if (trash1.xcor()-60 <turtle.xcor()< trash1.xcor()+60) and (trash1.ycor()-45 <turtle.ycor()< trash1.ycor()+45):
-         pygame.mixer.music.play()
-         print("You hit the trash! Game over !!")
-         quit()
+        pygame.mixer.music.play()
+        print("You hit the trash!!!")
+        trash1.goto(400,trash_y)
+        clear1 = Heart.pop(-1)
+        heart.clearstamp(clear1)
+        if len(Heart) == 0:
+            score_cac()
+            quit()
+     
     if (trash2.xcor()-60 <turtle.xcor()< trash2.xcor()+60) and (trash2.ycor()-45 <turtle.ycor()< trash2.ycor()+45):
         pygame.mixer.music.play()
-        print("You hit the trash! Game over !!")
-        quit()
+        print("You hit the trash!!!")
+        trash2.goto(400,trash_y)
+        clear1 = Heart.pop(-1)
+        heart.clearstamp(clear1)
+        if len(Heart) == 0:
+            score_cac()
+            quit()
+    
     
     
     #if len(trash_pos) <=4:
@@ -290,7 +331,6 @@ def move_trash():
         make_trash(trash2)
         
     turtle.ontimer(move_trash, TIME_STEP)
-
     
 def make_trash(trash_turtle):
     
@@ -313,25 +353,25 @@ for i in food_pos:
     food_pos_num += 1
     if food_pos_num == 2:
         break
-
+score_count = 0
 def move_food():
     global TIME_STEP
     food.penup()
     food.backward(SQUARE_SIZE)
     if (food.xcor()-60 < turtle.xcor()< food.xcor()+60) and (food.ycor()-45 <turtle.ycor()< food.ycor()+45):
+        global score_count
         print("You ate the jellyfish nice!!!")
+        score_count += 1
         make_food()
     if food.xcor()<= -410:
         food.hideturtle()
         make_food()
-    turtle.ontimer(move_food,TIME_STEP)
+    turtle.ontimer(move_food,TIME_STEP3)
 def make_food():
     min1_y=-int(SIZE_Y/2/SQUARE_SIZE)+1
     max1_y=int(SIZE_Y/2/SQUARE_SIZE)-1
 
     food_y = random.randint(min1_y,max1_y)*SQUARE_SIZE
-   
-
 
 
 
@@ -340,11 +380,25 @@ def make_food():
     food.goto(400,food_y)
     food.speed()
     food.showturtle()
+level_counter = 1  
+
+
+def level_printer():
+    global level_counter
+    global TIME_STEP
+    turtle.write("level " + str(level_counter), font = ("Oswald", 75,"normal",))
+    level_counter += 1
+    time.sleep(1)
+    turtle.clear()
+    turtle.ontimer(level_printer, TIME_STEP2)
+def score_cac():
+    turtle.hideturtle()
+    turtle.goto(-400, 0)
+    turtle.write("your score was " + str(score_count * level_counter) + " Very nice!!!", font = ("Arial", 40))
+   
+
     
-
-
-    
-
+level_printer()
 make_food()
 move_food()
 move_turtle()
